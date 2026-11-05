@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="kk" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TezZhaz - Пернетақта тренажеры</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md flex items-center justify-center font-bold text-lg">
+                    ⌨️
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                        TezZhaz 
+                        <span class="text-xs px-2 py-0.5 bg-brand-100 dark:bg-brand-900/60 text-brand-600 dark:text-brand-300 rounded-full font-medium">Тренажер</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Пернетақтаны жылдам әрі қатесіз жазып үйрен</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs & Actions -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="switchTab('trainer')" id="tab-trainer" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-brand-600 text-white shadow-sm">
+                    Жаттығу
+                </button>
+                <button onclick="switchTab('leaderboard')" id="tab-leaderboard" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600">
+                    🏆 Үздіктер
+                </button>
+                <button onclick="switchTab('teacher')" id="tab-teacher" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center gap-1">
+                    <span>👨‍🏫</span> Мұғалім бұрышы
+                </button>
+
+                <div class="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+                <!-- Sound Toggle -->
+                <button onclick="toggleSound()" id="sound-btn" title="Дыбысты қосу/өшіру" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm">
+                    🔊
+                </button>
+
+                <!-- Dark/Light Mode Toggle -->
+                <button onclick="toggleDarkMode()" id="theme-btn" title="Қараңғы/Жарық режим" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm">
+                    🌙
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+        
+        <!-- TRAINER SECTION -->
+        <section id="section-trainer" class="space-y-6">
+            
+            <!-- Controls & Settings Panel -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+                
+                <!-- Student Name Input -->
+                <div class="w-full md:w-auto flex-1">
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Оқушы аты:</label>
+                    <input type="text" id="student-name" placeholder="Атыңыз..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" />
+                </div>
+
+                <!-- Language Selection -->
+                <div class="w-full md:w-48">
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Тіл:</label>
+                    <select id="lang-select" onchange="changeLanguage()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                        <option value="kk">🇰🇿 Қазақ тілі</option>
+                        <option value="ru">🇷🇺 Орыс тілі</option>
+                        <option value="en">🇬🇧 Ағылшын тілі</option>
+                    </select>
+                </div>
+
+                <!-- Mode Selection -->
+                <div class="w-full md:w-auto">
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Жаттығу режимі:</label>
+                    <div class="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                        <button onclick="setMode('free')" id="mode-free" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">Еркін</button>
+                        <button onclick="setMode('1min')" id="mode-1min" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-brand-600 text-white shadow-sm whitespace-nowrap">1 минут</button>
+                        <button onclick="setMode('3min')" id="mode-3min" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">3 минут</button>
+                        <button onclick="setMode('20words')" id="mode-20words" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">20 сөз</button>
+                        <button onclick="setMode('50words')" id="mode-50words" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">50 сөз</button>
+                        <button onclick="setMode('100words')" id="mode-100words" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">100 сөз</button>
+                        <button onclick="toggleProverbs()" id="mode-proverbs" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-900/20 whitespace-nowrap">💬 Мәтелдер</button>
+                        <button onclick="toggleTexts()" id="mode-texts" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20 whitespace-nowrap">📜 Мәтіндер</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">УАҚЫТ / ҚАЛДЫҒЫ</div>
+                    <div id="stat-timer" class="text-2xl font-bold text-brand-600 dark:text-brand-400">60 сек</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">ЖЫЛДАМДЫҚ (WPM)</div>
+                    <div id="stat-wpm" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">0</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">ДӘЛДІК</div>
+                    <div id="stat-accuracy" class="text-2xl font-bold text-amber-600 dark:text-amber-400">100%</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">ҚАТЕЛЕР</div>
+                    <div id="stat-errors" class="text-2xl font-bold text-rose-600 dark:text-rose-400">0</div>
+                </div>
+            </div>
+
+            <!-- Typing Area Card -->
+            <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6 relative overflow-hidden">
+                
+                <!-- Words Display Box -->
+                <div id="word-display" class="min-h-[160px] h-auto relative text-xl sm:text-2xl font-mono leading-relaxed select-none text-slate-400 flex flex-wrap content-start gap-x-3 gap-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                    <!-- Words generated via JS -->
+                </div>
+
+                <!-- Hidden Input to capture keystrokes -->
+                <input type="text" id="type-input" class="absolute opacity-0 pointer-events-none" autocomplete="off" autocapitalize="off" spellcheck="false" />
+
+                <!-- Action Controls (Restart & Instructions) -->
+                <div class="flex flex-wrap items-center justify-end gap-4 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    
+                    <button onclick="resetTest()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2">
+                        <span>🔄</span> Қайта бастау (Restart)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visual Virtual Keyboard -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+                <div class="min-w-[650px] space-y-2 flex flex-col items-center select-none" id="virtual-keyboard">
+                    <div id="keyboard-rows" class="w-full space-y-2 flex flex-col items-center"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- LEADERBOARD SECTION -->
+        <section id="section-leaderboard" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">🏆 Көшбасшылар тақтасы (Leaderboard)</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Ең үздік теру нәтижелері</p>
+                    </div>
+                    <button onclick="clearScores()" class="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-900/30 rounded-lg hover:bg-rose-100 transition-colors">Тарихты тазалау</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-400 uppercase">
+                                <th class="py-3 px-4">Орын</th>
+                                <th class="py-3 px-4">Аты-жөні</th>
+                                <th class="py-3 px-4">Тіл</th>
+                                <th class="py-3 px-4">WPM (Жылдамдық)</th>
+                                <th class="py-3 px-4">Дәлдік</th>
+                                <th class="py-3 px-4">Күні</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body" class="divide-y divide-slate-100 dark:divide-slate-700/60 text-sm">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEACHER CORNER SECTION -->
+        <section id="section-teacher" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>👨‍🏫</span> Мұғалімдерге арналған әдістемелік бұрыш
+                    </h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Информатика сабақтарында оқушылардың пернетақтада жылдам жазу дағдыларын қалыптастыру әдістемесі.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="text-brand-600 font-bold text-lg">1. Дұрыс отыру</div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Арқаны тік ұстап, аяқты жерге толық басып отыру. Пернетақта мен монитор арасындағы қашықтық 45-50 см болуы тиіс.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="text-brand-600 font-bold text-lg">2. Саусақтарды орналастыру</div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Сол қолдың сұқ саусағы «Ф» (F), оң қолдың сұқ саусағы «А» (J) әріптеріндегі дөңес белгілерде тұруы шарт (негізгі позиция).</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="text-brand-600 font-bold text-lg">3. Көзге сенім</div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Пернетақтаға қарамай, экранға немесе тапсырма мәтініне қарап теруге (соқыр әдіспен жазу) машықтандыру.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-brand-50 dark:bg-brand-900/20 border border-brand-100 dark:border-brand-800 text-xs text-brand-800 dark:text-brand-200 leading-relaxed">
+                    💡 <b>Мұғалімге кеңес:</b> Сабақ басында оқушыларға 5 минуттық 1 минуттық жарыс ұйымдастырып, нәтижелерін Көшбасшылар тақтасы арқылы бағалау сабақтың қызығушылығын арттырады.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400 mt-12">
+        TezZhaz • Информатика сабақтарына арналған интерактивті пернетақта тренажеры &copy; 2026
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const dictionaries = {
+            kk: {
+                words: ["әже", "һауыз", "дәстүр", "қуаныш", "тапсырма", "ақыл", "мектеп", "оқушы", "білім", "алтын", "қалам", "кітап", "ғарыш", "бала", "ұстаз", "жаңбыр", "жел", "табиғат", "өркен", "еліміз", "астана", "теңіз", "тау", "өзен", "ағаш", "гүл", "күн", "жұлдыз", "ай", "аспан", "дала"],
+                proverbs: [
+                    "Білімді мыңды жығар, білекті бірді жығар.",
+                    "Оқу – инемен құдық қазғандай.",
+                    "Жеті рет өлшеп, бір рет кес.",
+                    "Еңбек ерлікке жеткізер, ерлік елдікке жеткізер.",
+                    "Әдептілік – ар-ұяттың белгісі."
+                ],
+                texts: [
+                    "Маңғыстау — қасиетті өлке! Мұнда мыңжылдық тарих, Бекет ата мен Шерқала бар. Таңғажайып жер!",
+                    "Мектеп — білім ордасы, болашаққа жолдама! Мұғалімдер мен оқушылар бірлесіп жаңа белестерді бағындырады.",
+                    "Адамгершілік пен сыйластық — ең үлкен құндылық! Үлкенді сыйлау, кішіге ізет көрсету — ата-бабамыздан қалған өнеге.",
+                    "Абай (1845–1904) — Ұлы ақын, философ, композитор! Табиғат-ананы суреттеген сөз зергері ме?",
+                    "Информатика: компьютер, жасанды интеллект және IT-технологиялар! Сәттілік, жас программистер!",
+                    "Қазақстан — біздің туған Отанымыз! Астана, Ақтау, Бейнеу — туған жердің көркі."
+                ]
+            },
+            ru: {
+                words: ["школа", "ученик", "знания", "книга", "учитель", "класс", "солнце", "мир", "труд", "родина", "успех", "наука", "дружба", "компьютер", "упражнение", "быстро", "память", "экран"],
+                proverbs: [
+                    "Ученье — свет, а неученье — тьма.",
+                    "Делу время, потехе час.",
+                    "Без труда не выловишь и рыбку из пруда.",
+                    "Век живи — век учись.",
+                    "Семь раз отмерь, один раз отрежь."
+                ],
+                texts: [
+                    "Привет, мир! Как твои дела? Информатика — это супер!",
+                    "Астанинский форум: 2026-й год приносит новые технологии!",
+                    "Быстро, четко и без ошибок — вот главный секрет успехов!"
+                ]
+            },
+            en: {
+                words: ["school", "student", "knowledge", "book", "teacher", "class", "sun", "world", "work", "success", "science", "friend", "computer", "typing", "speed", "practice", "future", "learning", "code", "smart"],
+                proverbs: [
+                    "Practice makes perfect.",
+                    "Knowledge is power.",
+                    "Actions speak louder than words.",
+                    "Where there is a will there is a way.",
+                    "Time and tide wait for no man."
+                ],
+                texts: [
+                    "Hello, World! How are you doing today? Ready, set, go!",
+                    "Computer Science (CS) is fun! Code: `print('Hello!')`.",
+                    "Fast & accurate typing: standard QWERTY layout (100% WPM)!"
+                ]
+            }
+        };
+
+        const layouts = {
+            kk: [
+                ["ә", "і", "ң", "ғ", "ү", "ұ", "қ", "ө", "һ"],
+                ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ"],
+                ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э"],
+                ["я", "ч", "с", "м", "и", "т", "ь", "б", "ю"],
+                ["бос орын"]
+            ],
+            ru: [
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ё"],
+                ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ"],
+                ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э"],
+                ["я", "ч", "с", "м", "и", "т", "ь", "б", "ю"],
+                ["бос орын"]
+            ],
+            en: [
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+                ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+                ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+                ["z", "x", "c", "v", "b", "n", "m"],
+                ["space"]
+            ]
+        };
+
+        let currentLang = 'kk';
+        let currentMode = '1min';
+        let isProverbs = false;
+        let isTexts = false;
+        let soundEnabled = true;
+        let isDarkMode = false;
+
+        let wordsList = [];
+        let currentIndex = 0;
+        let inputChars = [];
+        let timer = 60;
+        let timerInterval = null;
+        let isStarted = false;
+        let startTime = null;
+        let errorsCount = 0;
+        let correctCharsCount = 0;
+        let totalTypedCount = 0;
+        let targetWordCount = 0;
+
+        let audioCtx = null;
+        function playKeySound() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300 + Math.random() * 100, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {}
+        }
+
+        window.onload = function() {
+            initVirtualKeyboard();
+            resetTest();
+            loadLeaderboard();
+            
+            document.getElementById('word-display').addEventListener('click', () => {
+                document.getElementById('type-input').focus();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+                document.getElementById('type-input').focus();
+            });
+
+            document.getElementById('type-input').addEventListener('input', handleTyping);
+            document.getElementById('type-input').addEventListener('keydown', handleKeyDown);
+        };
+
+        function switchTab(tabId) {
+            ['trainer', 'leaderboard', 'teacher'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
+                document.getElementById(`tab-${t}`).classList.add('bg-slate-100', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            });
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+            document.getElementById(`tab-${tabId}`).classList.remove('bg-slate-100', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').innerText = soundEnabled ? '🔊' : '🔇';
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-btn').innerText = '☀️';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-btn').innerText = '🌙';
+            }
+        }
+
+        function changeLanguage() {
+            currentLang = document.getElementById('lang-select').value;
+            initVirtualKeyboard();
+            resetTest();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            isProverbs = false;
+            isTexts = false;
+            ['free', '1min', '3min', '20words', '50words', '100words'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-brand-600 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300";
+                    }
+                }
+            });
+            updateCustomBtnStyles();
+            resetTest();
+        }
+
+        function toggleProverbs() {
+            isProverbs = !isProverbs;
+            isTexts = false;
+            updateCustomBtnStyles();
+            resetTest();
+        }
+
+        function toggleTexts() {
+            isTexts = !isTexts;
+            isProverbs = false;
+            updateCustomBtnStyles();
+            resetTest();
+        }
+
+        function updateCustomBtnStyles() {
+            const provBtn = document.getElementById('mode-proverbs');
+            const txtBtn = document.getElementById('mode-texts');
+            
+            if (provBtn) {
+                if (isProverbs) {
+                    provBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-brand-600 text-white shadow-sm";
+                } else {
+                    provBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-900/20";
+                }
+            }
+
+            if (txtBtn) {
+                if (isTexts) {
+                    txtBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-emerald-600 text-white shadow-sm";
+                } else {
+                    txtBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all border border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20";
+                }
+            }
+        }
+
+        function initVirtualKeyboard() {
+            const layout = layouts[currentLang];
+            const container = document.getElementById('keyboard-rows');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            layout.forEach((rowKeys) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = "flex gap-1.5 justify-center w-full";
+                rowKeys.forEach(key => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.id = `key-${key === 'space' || key === 'бос орын' ? ' ' : key}`;
+                    keyDiv.className = key === 'space' || key === 'бос орын' 
+                        ? "h-10 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300 px-24 uppercase"
+                        : "h-10 w-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-sm font-semibold uppercase text-slate-700 dark:text-slate-200 shadow-xs";
+                    keyDiv.innerText = key;
+                    rowDiv.appendChild(keyDiv);
+                });
+                container.appendChild(rowDiv);
+            });
+        }
+
+        function resetTest() {
+            clearInterval(timerInterval);
+            isStarted = false;
+            errorsCount = 0;
+            correctCharsCount = 0;
+            totalTypedCount = 0;
+            currentIndex = 0;
+            inputChars = [];
+            
+            if (currentMode === '1min') timer = 60;
+            else if (currentMode === '3min') timer = 180;
+            else if (currentMode.endsWith('words')) timer = 0;
+            else timer = 0;
+
+            document.getElementById('stat-timer').innerText = currentMode === 'free' ? 'Еркін' : (currentMode.endsWith('words') ? '0 сек' : `${timer} сек`);
+            document.getElementById('stat-wpm').innerText = '0';
+            document.getElementById('stat-accuracy').innerText = '100%';
+            document.getElementById('stat-errors').innerText = '0';
+            document.getElementById('type-input').value = '';
+
+            generateWords();
+            renderWords();
+        }
+
+        function generateWords() {
+            const data = dictionaries[currentLang];
+            wordsList = [];
+            if (isProverbs) {
+                let p = data.proverbs[Math.floor(Math.random() * data.proverbs.length)];
+                wordsList = p.split(' ');
+            } else if (isTexts) {
+                let t = data.texts[Math.floor(Math.random() * data.texts.length)];
+                wordsList = t.split(' ');
+            } else {
+                let source = data.words;
+                let count = 40;
+                if (currentMode === '20words') count = 20;
+                else if (currentMode === '50words') count = 50;
+                else if (currentMode === '100words') count = 100;
+                targetWordCount = count;
+                for (let i = 0; i < count; i++) {
+                    let w = source[Math.floor(Math.random() * source.length)];
+                    wordsList.push(w);
+                }
+            }
+        }
+
+        function renderWords() {
+            const container = document.getElementById('word-display');
+            container.innerHTML = '';
+            
+            wordsList.forEach((word, wIdx) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = "inline-flex relative mx-1";
+                
+                for (let cIdx = 0; cIdx < word.length; cIdx++) {
+                    const charSpan = document.createElement('span');
+                    charSpan.innerText = word[cIdx];
+                    charSpan.className = "transition-colors duration-75 text-slate-400 dark:text-slate-500";
+                    
+                    if (wIdx === 0 && cIdx === 0) {
+                        charSpan.classList.add('border-b-2', 'border-brand-500', 'text-slate-800', 'dark:text-white');
+                    }
+                    wordSpan.appendChild(charSpan);
+                }
+                const spaceSpan = document.createElement('span');
+                spaceSpan.innerText = " ";
+                spaceSpan.className = "text-transparent";
+                wordSpan.appendChild(spaceSpan);
+
+                container.appendChild(wordSpan);
+            });
+        }
+
+        function startTimerIfNeeded() {
+            if (isStarted || currentMode === 'free') return;
+            isStarted = true;
+            startTime = new Date();
+            
+            timerInterval = setInterval(() => {
+                if (currentMode === '1min' || currentMode === '3min') {
+                    timer--;
+                    document.getElementById('stat-timer').innerText = `${timer} сек`;
+                    if (timer <= 0) {
+                        endTest();
+                    }
+                } else if (currentMode.endsWith('words')) {
+                    timer++;
+                    document.getElementById('stat-timer').innerText = `${timer} сек`;
+                }
+                updateStats();
+            }, 1000);
+        }
+
+        function handleKeyDown(e) {
+            playKeySpeedEffect(e.key);
+            startTimerIfNeeded();
+
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                if (inputChars.length > 0) {
+                    inputChars.pop();
+                    updateDisplayState();
+                }
+            }
+        }
+
+        function handleTyping(e) {
+            const val = e.target.value;
+            if (!val) return;
+            const lastChar = val[val.length - 1];
+            e.target.value = '';
+
+            playKeySound();
+            totalTypedCount++;
+
+            let fullText = wordsList.join(' ');
+            if (inputChars.length < fullText.length) {
+                let expectedChar = fullText[inputChars.length];
+                let isCorrect = (lastChar === expectedChar);
+                
+                if (isCorrect) {
+                    correctCharsCount++;
+                } else {
+                    errorsCount++;
+                }
+
+                inputChars.push({
+                    char: lastChar,
+                    correct: isCorrect
+                });
+
+                updateDisplayState();
+                updateStats();
+
+                if (inputChars.length >= fullText.length) {
+                    if (currentMode.endsWith('words')) {
+                        endTest();
+                    } else {
+                        generateWords();
+                        inputChars = [];
+                        renderWords();
+                    }
+                }
+            }
+        }
+
+        function playKeySpeedEffect(key) {
+            let k = key.toLowerCase();
+            if (k === ' ') k = ' ';
+            const el = document.getElementById(`key-${k}`);
+            if (el) {
+                el.classList.add('bg-brand-500', 'text-white', 'scale-95');
+                setTimeout(() => {
+                    el.classList.remove('bg-brand-500', 'text-white', 'scale-95');
+                }, 100);
+            }
+        }
+
+        function updateDisplayState() {
+            const container = document.getElementById('word-display');
+            const wordSpans = container.children;
+            let charGlobalIdx = 0;
+
+            wordsList.forEach((word, wIdx) => {
+                const wordSpan = wordSpans[wIdx];
+                if (!wordSpan) return;
+                const charSpans = wordSpan.children;
+
+                for (let cIdx = 0; cIdx <= word.length; cIdx++) {
+                    const charSpan = charSpans[cIdx];
+                    if (!charSpan) continue;
+
+                    charSpan.className = "transition-colors duration-75 text-slate-400 dark:text-slate-500";
+
+                    if (charGlobalIdx < inputChars.length) {
+                        let res = inputChars[charGlobalIdx];
+                        if (res.correct) {
+                            charSpan.classList.add('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
+                        } else {
+                            charSpan.classList.add('text-rose-600', 'dark:text-rose-400', 'bg-rose-100', 'dark:bg-rose-900/40', 'font-bold');
+                        }
+                    } else if (charGlobalIdx === inputChars.length) {
+                        charSpan.classList.add('border-b-2', 'border-brand-500', 'text-slate-800', 'dark:text-white', 'font-bold');
+                    }
+                    charGlobalIdx++;
+                }
+            });
+            
+
+        }
+
+        function updateStats() {
+            let timeElapsed = 60;
+            if (currentMode === '1min') timeElapsed = 60 - timer;
+            else if (currentMode === '3min') timeElapsed = 180 - timer;
+            else if (currentMode.endsWith('words')) timeElapsed = Math.max(1, timer);
+            else if (startTime) timeElapsed = Math.max(1, Math.floor((new Date() - startTime) / 1000));
+
+            let minutes = timeElapsed / 60;
+            let wpm = minutes > 0 ? Math.round((correctCharsCount / 5) / minutes) : 0;
+            let accuracy = totalTypedCount > 0 ? Math.round((correctCharsCount / totalTypedCount) * 100) : 100;
+
+            document.getElementById('stat-wpm').innerText = wpm;
+            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('stat-errors').innerText = errorsCount;
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            let name = document.getElementById('student-name').value.trim() || 'Аноним';
+            let wpm = document.getElementById('stat-wpm').innerText;
+            let accuracy = document.getElementById('stat-accuracy').innerText;
+            
+            saveScore(name, currentLang, wpm, accuracy);
+            alert(`Жаттығу аяқталды, ${name}!
+Жылдамдық: ${wpm} WPM
+Дәлдік: ${accuracy}`);
+            resetTest();
+            switchTab('leaderboard');
+        }
+
+        function saveScore(name, lang, wpm, accuracy) {
+            let scores = JSON.parse(localStorage.getItem('tezzhaz_scores') || '[]');
+            scores.push({
+                name,
+                lang: lang.toUpperCase(),
+                wpm: parseInt(wpm),
+                accuracy,
+                date: new Date().toLocaleDateString()
+            });
+            scores.sort((a, b) => b.wpm - a.wpm);
+            scores = scores.slice(0, 10);
+            localStorage.setItem('tezzhaz_scores', JSON.stringify(scores));
+            loadLeaderboard();
+        }
+
+        function loadLeaderboard() {
+            let scores = JSON.parse(localStorage.getItem('tezzhaz_scores') || '[]');
+            let tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+
+            if (scores.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">Әзірге нәтижелер жоқ. Жаттығу жасап көріңіз!</td></tr>`;
+                return;
+            }
+
+            scores.forEach((s, idx) => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-brand-600">#${idx + 1}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800 dark:text-white">${s.name}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-xs font-medium">${s.lang}</span></td>
+                    <td class="py-3 px-4 font-bold text-emerald-600">${s.wpm} WPM</td>
+                    <td class="py-3 px-4 font-medium text-amber-600">${s.accuracy}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${s.date}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearScores() {
+            if (confirm('Барлық нәтижелерді тазалауға сенімдісіз бе?')) {
+                localStorage.removeItem('tezzhaz_scores');
+                loadLeaderboard();
+            }
+        }
+    </script>
+</body>
+</html>
